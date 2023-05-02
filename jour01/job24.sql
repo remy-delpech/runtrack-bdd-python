@@ -1,0 +1,1 @@
+SELECT AVG(CAST(age AS DECIMAL)) FROM etudiants;
