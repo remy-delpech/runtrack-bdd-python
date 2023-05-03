@@ -1,96 +1,43 @@
 import mysql.connector
 
-# Remplacez ces valeurs par les informations de connexion à votre base de données
-db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "Unknow!",
-    "database": "LaPlateforme"
-}
-
-# Connexion à la base de données
-conn = mysql.connector.connect(**db_config)
-cursor = conn.cursor()
-
-# Création de la table "employes"
-cursor.execute("""
-CREATE TABLE employes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
-    prenom VARCHAR(255),
-    salaire DECIMAL(10,2),
-    id_service INT
-)
-""")
-
-cursor.execute("""
-CREATE TABLE employes_example (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
-    prenom VARCHAR(255),
-    salaire DECIMAL(10,2),
-    id_service INT
-);
-""")
-
-# Insérer des employés dans la table "employes"
-employes = [
-    ('Dupont', 'Pierre', 3200.00, 1),
-    ('Martin', 'Julie', 2800.00, 2),
-    ('Leclerc', 'Sophie', 3500.00, 1),
-    ('Lefevre', 'Jean', 2700.00, 2),
-    ('Durand', 'Marie', 4500.00, 1)
-]
-
-cursor.executemany("INSERT INTO employes (nom, prenom, salaire, id_service) VALUES (%s, %s, %s, %s)", employes)
-conn.commit()
-
-# Récupérer les employés dont le salaire est supérieur à 3000 €
-cursor.execute("SELECT * FROM employes WHERE salaire > 3000")
-high_salary_employees = cursor.fetchall()
-print("Employés avec un salaire supérieur à 3000 € :")
-for employee in high_salary_employees:
-    print(employee)
-
-# Création de la table "services"
-cursor.execute("""
-CREATE TABLE services (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255)
-)
-""")
-
-# Insérer des services dans la table "services"
-services = [
-    ('Ressources Humaines',),
-    ('Comptabilité',),
-]
-
-cursor.executemany("INSERT INTO services (nom) VALUES (%s)", services)
-conn.commit()
-
-# Récupérer tous les employés et leur service respectif
-cursor.execute("""
-SELECT e.id, e.nom, e.prenom, e.salaire, s.nom as service
-FROM employes e
-JOIN services s ON e.id_service = s.id
-""")
-employees_and_services = cursor.fetchall()
-
-print("\nEmployés et leur service respectif :")
-for employee_and_service in employees_and_services:
-    print(employee_and_service)
-
-# Fermeture de la connexion à la base de données
-cursor.close()
-conn.close()
-
 class EmployeeManager:
     def __init__(self, db_config):
         self.db_config = db_config
 
     def _connect(self):
         return mysql.connector.connect(**self.db_config)
+
+    def get_employees_and_services(self):
+        conn = self._connect()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT e.id, e.nom, e.prenom, e.salaire, s.nom as service
+            FROM employes e
+            JOIN services s ON e.id_service = s.id
+        """)
+        employees_and_services = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return employees_and_services
+
+db_config = {
+    "host": "localhost",
+    "user": "root",
+    "password": "Unknow!",
+    "database": "nom_de_la_base_de_donnees"
+}
+
+employee_manager = EmployeeManager(db_config)
+
+# Récupérer tous les employés et leur service respectif
+employees_and_services = employee_manager.get_employees_and_services()
+
+print("Employés et leur service respectif :")
+for employee_and_service in employees_and_services:
+    print(employee_and_service)
+
+class EmployeeManager:
+    # ...
 
     def create_employee(self, nom, prenom, salaire, id_service):
         conn = self._connect()
@@ -153,14 +100,7 @@ class EmployeeManager:
         cursor.close()
         conn.close()
         return employees
-
-db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "Unknow!",
-    "database": "LaPlateforme"
-}
-
+    
 employee_manager = EmployeeManager(db_config)
 
 # Créer un nouvel employé
