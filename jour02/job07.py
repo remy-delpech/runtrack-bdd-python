@@ -4,7 +4,7 @@ import mysql.connector
 db_config = {
     "host": "localhost",
     "user": "root",
-    "password": "Natalia280988!",
+    "password": "Unknow!",
     "database": "LaPlateforme"
 }
 
@@ -157,7 +157,7 @@ class EmployeeManager:
 db_config = {
     "host": "localhost",
     "user": "root",
-    "password": "Natalia280988!",
+    "password": "Unknow!",
     "database": "LaPlateforme"
 }
 
