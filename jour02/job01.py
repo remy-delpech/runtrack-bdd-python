@@ -3,7 +3,7 @@ import mysql.connector
 # Remplacez les valeurs ci-dessous par les informations de connexion de votre base de données
 config = {
   'user': 'root',
-  'password': 'Natalia280988!',
+  'password': 'Unknow',
   'host': 'localhost',
   'database': 'LaPlateforme',
   'raise_on_warnings': True
